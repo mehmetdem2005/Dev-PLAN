@@ -63,24 +63,7 @@ fun IpaPage(selected: Int, onSelect: (Int) -> Unit, onSpeak: (String) -> Unit) {
             Text(lesson.symbol, fontSize=72.sp, fontWeight=FontWeight.Black, color=Cobalt)
             Text(lesson.name, style=MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(16.dp))
-            Box(Modifier.fillMaxWidth().height(150.dp).background(LightBlue, RoundedCornerShape(20.dp))) {
-                Canvas(Modifier.fillMaxSize()) {
-                    val mid = size.height / 2
-                    val outer = Path().apply {
-                        moveTo(size.width * .15f, mid)
-                        cubicTo(size.width*.30f,size.height*.1f,size.width*.75f,size.height*.06f,size.width*.84f,mid)
-                        cubicTo(size.width*.74f,size.height*.92f,size.width*.36f,size.height*.92f,size.width*.15f,mid)
-                    }
-                    drawPath(outer, Cobalt, style=androidx.compose.ui.graphics.drawscope.Stroke(width=4.dp.toPx(),cap=StrokeCap.Round))
-                    val tongue = Path().apply {
-                        moveTo(size.width*.27f,size.height*.55f)
-                        cubicTo(size.width*.47f,size.height*.72f,size.width*.67f,size.height*.65f,size.width*.79f,size.height*.45f)
-                    }
-                    drawPath(tongue, Color(0xFF8B9297), style=androidx.compose.ui.graphics.drawscope.Stroke(width=6.dp.toPx(),cap=StrokeCap.Round))
-                    drawCircle(Lime, radius=9.dp.toPx(), center=Offset(size.width*.72f,size.height*.43f))
-                }
-                Pill("ŞEMATİK GÖSTERİM", Pane)
-            }
+            ArticulationDiagram(lesson.symbol, Modifier.fillMaxWidth())
             Spacer(Modifier.height(18.dp))
             Text(lesson.instruction, style=MaterialTheme.typography.bodyLarge)
             Spacer(Modifier.height(12.dp))
