@@ -116,14 +116,14 @@ fun SharePage(store: LocalStore, onShare: () -> Unit) {
         Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment=Alignment.CenterHorizontally) {
             Pill("YANKI  /  KONUŞMA GÜNLÜĞÜ", Lime)
             Spacer(Modifier.height(34.dp))
-            Text("KONUŞMAYA\nCESARET ET.", fontSize=30.sp, fontWeight=FontWeight.Black,
-                lineHeight=34.sp, color=Color.White, textAlign=TextAlign.Center)
+            Text("SESİNİ\nDUYUR.", fontSize=40.sp, fontWeight=FontWeight.Black,
+                lineHeight=44.sp, color=Ink, textAlign=TextAlign.Center)
             Spacer(Modifier.height(20.dp))
             MeasuredWaveform(store.secondPeaks.ifEmpty {store.firstPeaks}, Modifier.fillMaxWidth(), color=Cobalt)
             Spacer(Modifier.height(18.dp))
             Text("İlk deneme  " + (store.firstDuration/1000) + " sn", color=Ink, fontSize=15.sp)
             Spacer(Modifier.height(12.dp))
-            Text("Sonraki deneme  " + (store.secondDuration/1000) + " sn", color=Color.White, fontSize=15.sp)
+            Text("Sonraki deneme  " + (store.secondDuration/1000) + " sn", color=Ink, fontSize=15.sp)
             Spacer(Modifier.weight(1f))
             Text("KENDİ SESİN • KENDİ HİKÂYEN", color=Cobalt, fontWeight=FontWeight.Bold, fontSize=11.sp)
         }
