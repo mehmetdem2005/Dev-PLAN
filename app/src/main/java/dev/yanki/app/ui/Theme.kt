@@ -11,13 +11,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-val Paper = Color(0xFFF7F7F2)
-val Ink = Color(0xFF151716)
-val Muted = Color(0xFF656861)
-val Lime = Color(0xFFC4F532)
-val Cobalt = Color(0xFF3546EF)
+val Paper = Color(0xFFF8F8F5)
+val Ink = Color(0xFF161A1E)
+val Muted = Color(0xFF737980)
+val Lime = Color(0xFFC8FC26)
+val Cobalt = Color(0xFF283CEB)
 val Pane = Color(0xFFFFFFFF)
-val Line = Color(0xFFE8E9E2)
+val Line = Color(0xFFEDF0EB)
 val LightBlue = Color(0xFFE9EDFF)
 val PaleLime = Color(0xFFEFF9D1)
 
