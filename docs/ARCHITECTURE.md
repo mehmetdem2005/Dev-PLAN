@@ -13,13 +13,15 @@ YANKI ilk aşamada çevrimdışı konuşma alıştırması uygulamasıdır. Uçt
 - `ui/SocialPages.kt`: sosyal davet, gerçek istatistik, metin paylaşımı, profil.
 - `data/Content.kt`: denetlenmiş İngilizce görev ve fonetik örnekleri.
 - `data/LocalStore.kt`: düşük karmaşıklıklı yerel kalıcılık.
-- `audio/VoiceEngine.kt`: Android ses kayıt/oynatma ve cihaz TTS'i.
+- `audio/VoiceEngine.kt`: Android ses kayıt/oynatma, gerçek tepe genliği örnekleme ve cihaz TTS'i.
+- `ui/ArticulationDiagram.kt`: altı ses için eğitim amaçlı farklı artikülasyon şemaları.
+- `share/ShareCardExporter.kt`: tamamen cihazda oluşturulan PNG sonuç kartı ve güvenli paylaşım.
 
 ## Yapılan ve yapılmayan ölçümler
 
-**Yapılan:** gerçek ses kaydı, süre, tamamlanan görev sayısı, dinleme testi cevap sayısı, doğru cevap sayısı.
+**Yapılan:** gerçek ses kaydı, süre, kayıt sırasındaki tepe genlikleri, tamamlanan görev sayısı, dinleme testi cevap sayısı, doğru cevap sayısı, 1/3/7 gün tekrar planlaması.
 
-**Henüz yapılmayan:** sesin yazıya dökülmesi (ASR), sesle eşleşen dalga grafiği, formant/F0 ölçümü, fonem hatası teşhisi, bağımsız CEFR/aksan puanı. Uygulamadaki dekoratif ses dalgası ölçüm aracı değildir.
+**Henüz yapılmayan:** ASR, PCM dalga biçimi ve spektrogram, formant/F0, fonem hatası teşhisi, bağımsız CEFR/aksan puanı. Tepe genlikleri gerçek mikrofon verisidir, ancak fonem analizi değildir.
 
 ## Sadece ücretsiz / açık kaynak kullanım ilkesi
 
@@ -35,10 +37,10 @@ YANKI ilk aşamada çevrimdışı konuşma alıştırması uygulamasıdır. Uçt
 
 1. CI build onarımı ve Android 11 cihazda kayıt testi.
 2. Ücretsiz açık kaynak TTS ses kayıtları veya lisansı uygun ses dosyaları için çevrimdışı yedek.
-3. Gerçek dalga biçimi: M4A decode sonrası örnek/spektrogram hesaplama.
-4. Fonksiyonel aralıklı tekrar: yerel görev geçmişi ve dueDate.
+3. PCM dalga biçimi: M4A decode sonrası örnek/spektrogram hesaplama.
+4. Mevcut 1/3/7 gün tekrar planını FSRS ile değiştirmek ve gecikmeli transfer testi eklemek.
 5. Cihaz üzerinde offline ASR modeli, net belirsizlik/güven gösterimi.
-6. Ses paylaşımı için kullanıcı kontrollü görsel kart veya MP4; Media3 ile.
+6. Hazır PNG paylaşımını gerçek öncesi/sonrası sesli MP4'e taşımak; Media3 ile.
 7. Gerçek sosyal özellikler ancak kullanıcı talebi ve güvenlik modeli netleşirse.
 8. Yerel veri silme ve dışa aktarma; izinlere yönelik otomatik testler.
 

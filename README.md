@@ -6,16 +6,17 @@
 
 - Kotlin / Jetpack Compose tabanlı Android uygulaması.
 - Açılış, hedef seçimi, ısınma testi, ana sayfa, görevler, senaryo, konuşma, IPA, kayıt karşılaştırması, minimal çift dinleme, topluluk, ilerleme, paylaşım, profil olmak üzere **14 ekrana** bağlı navigasyon.
-- İngilizce için 10 denetlenmiş gündelik senaryo, 6 IPA ses çalışması ve 5 minimal çift.
+- İngilizce için 10 denetlenmiş gündelik senaryo, 6 farklı artikülasyon şemalı IPA ses çalışması ve 5 minimal çift.
+- Görev tamamlandıktan sonra 1/3/7 gün aralıklı, cihazda işleyen temel tekrar planı (tam FSRS değil).
 - Android MediaRecorder ile gerçek yerel M4A kayıt, MediaPlayer ile oynatma, kayıt süresi, önce/sonra karşılaştırması.
 - Cihazın mevcut TextToSpeech motoruyla örnek sözcük ve cümleleri dinletme (İngilizce ses paketinin kurulu olması gerekebilir).
-- Uygulama özel depolamasında kayıtlar ve SharedPreferences içinde öğrenme ilerlemesi.
-- Android Sharesheet üzerinden metin tabanlı görev ve meydan okuma paylaşımı.
+- Uygulama özel depolamasında görev bazlı kayıtlar, gerçek mikrofon tepe genlik grafikleri ve SharedPreferences içinde öğrenme ilerlemesi.
+- Android Sharesheet üzerinden metin tabanlı görev daveti ve **gerçek 1080×1920 PNG sonuç kartı** paylaşımı.
 - İnternet izni, hesap, ücretli API, zorunlu reklam, abonelik, sahte fonem yüzdesi **yok**.
 
 ## Henüz mevcut olmayanlar
 
-Offline ASR (sherpa-onnx/whisper.cpp/Vosk modeli), kayıttan türetilen gerçek dalga biçimi ve spektrogram, kalibre edilmiş fonem puanlama, FSRS aralıklı tekrar zamanlayıcısı, MP4 kısa video oluşturma, web tabanlı görev bağlantıları, çok kullanıcılı senkronizasyon ve sosyal sıralamalar. Arayüz bunları tamamlanmış gibi göstermiyor. Mevcut dalga biçimleri dekoratiftir.
+Offline ASR (sherpa-onnx/whisper.cpp/Vosk modeli), PCM örnek düzeyinde ses dalgası ve spektrogram, kalibre edilmiş fonem puanlama, FSRS aralıklı tekrar zamanlayıcısı, MP4 kısa video oluşturma, web tabanlı görev bağlantıları, çok kullanıcılı senkronizasyon ve sosyal sıralamalar. Arayüz bunları tamamlanmış gibi göstermiyor. Kayıt esnasında tepe genlikleri gerçekten örneklenir; kimi arayüz motifleri dekoratiftir.
 
 ## Derleme
 
