@@ -190,7 +190,22 @@ fun HomePage(store: LocalStore, onNavigate: (Page) -> Unit, onMission: (String) 
                 }
             }
         }
-        SectionTitle("Pratiğe devam et")
+        val dueMissions = store.dueMissionIds()
+    if (dueMissions.isNotEmpty()) {
+        Spacer(Modifier.height(16.dp))
+        Surface(onClick = { onMission(dueMissions.first()) }, color = PaleLime,
+            shape = RoundedCornerShape(18.dp), modifier = Modifier.fillMaxWidth()) {
+            Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text("BUGÜN HATIRLAMA ZAMANI", color = Cobalt, fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                    Text("Tekrar bekleyen " + dueMissions.size + " görev", fontWeight = FontWeight.Bold)
+                    Text("İpucu olmadan yeniden söyle", color = Muted, fontSize = 12.sp)
+                }
+                Icon(Icons.Default.ArrowForward, null, tint = Cobalt)
+            }
+        }
+    }
+    SectionTitle("Pratiğe devam et")
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Tile("Konuş", "Gerçek hayat görevleri", { onNavigate(Page.MISSIONS) }, color = PaleLime, modifier = Modifier.weight(1f))
             Tile("IPA", "Ses ve artikülasyon", { onNavigate(Page.IPA) }, color = LightBlue, modifier = Modifier.weight(1f))
@@ -201,7 +216,7 @@ fun HomePage(store: LocalStore, onNavigate: (Page) -> Unit, onMission: (String) 
             Tile("İlerleme", "Önce ve sonra", { onNavigate(Page.PROGRESS) }, modifier = Modifier.weight(1f))
         }
         Spacer(Modifier.height(18.dp))
-        InfoNotice("Öğrenme planın: Kısa konuşma görevi → hedefli düzeltme → tekrar. Tüm görevler internet bağlantısı olmadan açılır.")
+        InfoNotice("Öğrenme planın: konuşma → düzeltme → yeniden deneme → 1, 3 ve 7 gün sonra hatırlama. Bu basit aralıklı tekrar planıdır, FSRS değildir.")
         Spacer(Modifier.height(26.dp))
     }
 }
