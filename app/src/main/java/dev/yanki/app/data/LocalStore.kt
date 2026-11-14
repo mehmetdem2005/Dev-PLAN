@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import java.io.File
+import java.time.LocalDate
 
 class LocalStore(private val context: Context) {
     private val preferences = context.getSharedPreferences("yanki_local_v1", Context.MODE_PRIVATE)
@@ -33,6 +34,8 @@ class LocalStore(private val context: Context) {
     var completedIds by mutableStateOf(preferences.getStringSet("completed", emptySet())?.toSet() ?: emptySet())
         private set
     var practiceCount by mutableIntStateOf(preferences.getInt("practices", 0))
+        private set
+    var reviewVersion by mutableIntStateOf(0)
         private set
     var pairCorrect by mutableIntStateOf(preferences.getInt("pair_correct", 0))
         private set
@@ -82,7 +85,30 @@ class LocalStore(private val context: Context) {
     }
     fun markCompleted() {
         completedIds = completedIds + selectedMission
-        preferences.edit().putStringSet("completed", completedIds).apply()
+        val today = LocalDate.now().toEpochDay()
+        val dueKey = "review_due_" + selectedMission
+        val stageKey = "review_stage_" + selectedMission
+        val currentDue = preferences.getLong(dueKey, -1L)
+        val stage = preferences.getInt(stageKey, 0)
+        val editor = preferences.edit().putStringSet("completed", completedIds)
+        if (currentDue == -1L || currentDue <= today) {
+            val newStage = (stage + 1).coerceAtMost(3)
+            val afterDays = when(newStage) { 1 -> 1L; 2 -> 3L; else -> 7L }
+            editor.putInt(stageKey, newStage).putLong(dueKey, today + afterDays)
+        }
+        editor.apply()
+        reviewVersion += 1
+    }
+    fun dueMissionIds(): List<String> {
+        reviewVersion
+        val today = LocalDate.now().toEpochDay()
+        return LearningContent.missions.filter {
+            it.id in completedIds && preferences.getLong("review_due_" + it.id, Long.MAX_VALUE) <= today
+        }.map { it.id }
+    }
+    fun nextReviewDay(id: String): Long {
+        reviewVersion
+        return preferences.getLong("review_due_" + id, -1L)
     }
     fun addPairResult(correct: Boolean) {
         pairAttempts += 1
