@@ -1,25 +1,36 @@
-# Termux ile APK derleme
+# YANKI — Termux üzerinde Android APK
 
-Bu repo Android/Kotlin projesidir. Android SDK, JDK 17 ve Gradle gerektirir. Android Gradle Plugin'in yerleşik aapt2'si ARM64/Termux üzerinde çalışmayabilir. Çalıştığını varsaymıyoruz.
+**Durum:** Kaynak kod GitHub üzerinde. Termux/ARM64 için henüz doğrulanmış APK derlemesi yok. Android Gradle Plugin varsayılan AAPT2 derleyicisini x86_64 için indirebilir; bu dosya ARM64 üzerinde çalışmayabilir.
 
-## Tercih edilen güvenilir yol: GitHub Actions
-GitHub'da Actions -> Android Debug APK -> Run workflow. Başarılı olursa artifacts içinden `yanki-debug-apk` indir. GitHub-hosted runner SDK ve x86_64 build araçlarını kullanır. Dakika/kota hesap türüne bağlıdır.
+## İlk adım: yerel araçları kontrol et
 
-## Termux hazırlık
 ```sh
-pkg update && pkg upgrade
-pkg install openjdk-17 gradle git wget unzip
-git clone https://github.com/mehmetdem2005/Dev-PLAN.git ~/yanki
-cd ~/yanki
+pkg update
+pkg install git openjdk-17 gradle
 java -version
 gradle --version
+git clone https://github.com/mehmetdem2005/Dev-PLAN.git ~/yanki
+cd ~/yanki
 ```
 
-Android SDK'yı ayrıca kur; `ANDROID_HOME` SDK kökünü göstermeli, `platforms/android-35` ve `build-tools/35.0.0` mevcut olmalı. Ardından:
+Gradle 8.9 ve Android SDK platform 35 ile build-tools 35.0.0 gerekir. Termux paketindeki Gradle sürümü farklı olabilir. `gradle --version` çıktısını kontrol et. `ANDROID_HOME` SDK konumunu göstermelidir.
+
 ```sh
-gradle :app:assembleDebug --stacktrace
+echo "$ANDROID_HOME"
+ls "$ANDROID_HOME/platforms/android-35"
+ls "$ANDROID_HOME/build-tools/35.0.0"
+gradle :app:assembleDebug --no-daemon --stacktrace
 ```
 
-`AAPT2` çalıştırma hatası alırsan x86_64 aapt2'yi ARM'de zorlamaya çalışma. Termux için uygun yerel aapt2 binary'si ve `android.aapt2FromMavenOverride=/absolute/path/to/aapt2` gerekir; sürüm uyumu doğrulanmalıdır. Aynı nedenle bazı Gradle sürümleri ARM'de sorun çıkarabilir.
+APK başarılı derlenirse:
+`app/build/outputs/apk/debug/app-debug.apk`
 
-Bu dosya, otomatik kurulmuş/başarıyla test edilmiş bir Termux zinciri iddia etmez.
+## AAPT2 hatası durumunda
+
+Hata `Exec format error`, `aapt2 not found` veya ARM64 uyumsuzluğu olabilir. Rastgele aapt2 veya SDK dosyalarını indirmek yerine sistemine uygun, sürümü eşleşen yerel ARM64 AAPT2 gerekir. Gradle'a `android.aapt2FromMavenOverride=/mutlak/yol/aapt2` verilebilir; araç sürümü uyumlu olmalı. Bu çözüm bu cihazda **henüz test edilmiş değildir**.
+
+## Güvenilir alternatif: GitHub Actions
+
+Depoda `.github/workflows/android.yml` mevcut. GitHub > Dev-PLAN > Actions > Android Debug APK > Run workflow ile Ubuntu x86_64 runner üzerinde derle. Başarılı olursa `yanki-debug-apk` artifact'ını indir. Runner sınırları ve Actions kotaları GitHub hesabına bağlıdır.
+
+Önce GitHub derlemesinin hatasız olması, ardından Termux ARM64 portu önerilir.

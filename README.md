@@ -1,29 +1,42 @@
-# YANKI — Android konuşma ve dil öğrenme uygulaması
+# YANKI — Android konuşma deneyimi
 
-Referans: kullanıcının seçtiği açık zemin, neon-lime ve kobalt-mavi tasarım konsepti.
+**Tasarım yönü:** beyaz/kırık beyaz zemin, lime vurgular, kobalt mavi eylemler, editoryal tipografi ve dağ/ses dalgası görselleri. Referans, kullanıcının seçtiği **YANKI (konsept 2/5)** tasarımıdır. Bu depo başka bir marka veya uygulamaya dönüştürülmeyecektir.
 
-## Gerçekten çalışan v0.1
-- 13 bölümden oluşan ekran akışı: karşılama, hedef, seviye testi, ana sayfa, senaryo, konuşma, IPA, ses özeti, günlük görev, topluluk, ilerleme, paylaşım, profil.
-- Android mikrofonu ile yerel M4A ses kaydı, oynatma, iki deneme karşılaştırması.
-- Türkçe arayüz, çevrimdışı çalışan denetlenmiş İngilizce görevler ve minimal çift dinleme etkinliği.
-- Yerel SharedPreferences kayıtları (gün, görev, öğrenme dili, cevaplar).
-- Android paylaşım menüsüyle metin tabanlı görev daveti.
-- Abonelik, reklam, ücretli API, sahte aksan / CEFR yüzdesi yok.
+## Şu anda kaynak kodda bulunanlar
 
-## Henüz yapılmayanlar
-Offline ASR model entegrasyonu, insanla doğrulanmış fonem puanı, gerçek çok kullanıcılı senkronizasyon, MP4 video oluşturma, üretim kalitesinde FSRS scheduler ve içerik ses kayıtları. Arayüzde bunlar tamamlanmış özellik gibi gösterilmez.
+- Kotlin / Jetpack Compose tabanlı Android uygulaması.
+- Açılış, hedef seçimi, ısınma testi, ana sayfa, görevler, senaryo, konuşma, IPA, kayıt karşılaştırması, minimal çift dinleme, topluluk, ilerleme, paylaşım, profil olmak üzere **14 ekrana** bağlı navigasyon.
+- İngilizce için 10 denetlenmiş gündelik senaryo, 6 IPA ses çalışması ve 5 minimal çift.
+- Android MediaRecorder ile gerçek yerel M4A kayıt, MediaPlayer ile oynatma, kayıt süresi, önce/sonra karşılaştırması.
+- Cihazın mevcut TextToSpeech motoruyla örnek sözcük ve cümleleri dinletme (İngilizce ses paketinin kurulu olması gerekebilir).
+- Uygulama özel depolamasında kayıtlar ve SharedPreferences içinde öğrenme ilerlemesi.
+- Android Sharesheet üzerinden metin tabanlı görev ve meydan okuma paylaşımı.
+- İnternet izni, hesap, ücretli API, zorunlu reklam, abonelik, sahte fonem yüzdesi **yok**.
 
-## Geliştirme
-JDK 17, Android SDK 35 ve Gradle 8.9 gereklidir. Masaüstünde:
+## Henüz mevcut olmayanlar
+
+Offline ASR (sherpa-onnx/whisper.cpp/Vosk modeli), kayıttan türetilen gerçek dalga biçimi ve spektrogram, kalibre edilmiş fonem puanlama, FSRS aralıklı tekrar zamanlayıcısı, MP4 kısa video oluşturma, web tabanlı görev bağlantıları, çok kullanıcılı senkronizasyon ve sosyal sıralamalar. Arayüz bunları tamamlanmış gibi göstermiyor. Mevcut dalga biçimleri dekoratiftir.
+
+## Derleme
+
+Gereksinimler: JDK 17, Gradle 8.9, Android SDK platform 35, build-tools 35.0.0.
+
 ```sh
 gradle :app:assembleDebug
 ```
-APK: `app/build/outputs/apk/debug/app-debug.apk`
 
-Termux için `docs/TERMUX.md` dosyasına bakın. Android Gradle Plugin'in aapt2 dağıtımı Termux/ARM cihazında doğrudan çalışmayabilir; çözüm cihazdan cihaza değişir. GitHub Actions alternatifi vardır.
+Çıktı: `app/build/outputs/apk/debug/app-debug.apk`.
+
+GitHub Actions derlemesi: Actions > Android Debug APK > Run workflow. ARM64 üzerinde Termux konusunda **docs/TERMUX.md**'yi oku; AAPT2 uyum problemi nedeniyle çalışacağını varsaymıyoruz.
+
+## Mimari ve yol haritası
+
+Detaylar: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+Tüm çekirdek kod ücretsiz API'ler ve açık kaynak kütüphanelerle çalışacak şekilde tasarlandı. Bu sürümde bir sunucu veya ücretli model çağrısı yoktur. TTS, kullanıcının cihazında kurulu olan Android konuşma sentezi motoruna bağlıdır.
 
 ## Gizlilik
-Kayıtlar yalnızca uygulamanın özel dosya alanına yazılır. İlk sürümde sunucuya ses yüklenmez. Veriler uygulama kaldırılırsa silinir.
 
-## Lisans
-Uygulama kodu MIT. Harici ses modelleri ve ağırlıkları ayrı lisans koşullarına tabidir.
+Kayıtlar yalnızca cihazdaki uygulama-özel alanda tutulur; paylaşım işlemi kullanıcı tarafından manuel başlatılır. Buluta ses gönderilmez. Uygulama kaldırıldığında yerel kayıtlar silinir. Kayıtların tek tek silinmesi için arayüz gelecekte genişletilecektir.
+
+Uygulamanın kod lisansı: MIT. Harici modeller, TTS sesleri ve veri setleri kendi lisanslarına tabidir.
