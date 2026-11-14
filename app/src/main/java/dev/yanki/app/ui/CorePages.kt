@@ -1,6 +1,8 @@
 package dev.yanki.app.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,7 +31,7 @@ import dev.yanki.app.data.Mission
 
 @Composable
 fun WelcomePage(onStart: () -> Unit) {
-    Column(Modifier.fillMaxSize().background(Paper).padding(24.dp)) {
+    Column(Modifier.fillMaxSize().background(Paper).statusBarsPadding().navigationBarsPadding().verticalScroll(rememberScrollState()).padding(24.dp)) {
         Spacer(Modifier.height(24.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Row(Modifier.height(42.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -49,7 +51,7 @@ fun WelcomePage(onStart: () -> Unit) {
             Spacer(Modifier.weight(1f))
             Pill("ANDROID  •  ÜCRETSİZ")
         }
-        Spacer(Modifier.weight(.5f))
+        Spacer(Modifier.height(38.dp))
         Box(Modifier.fillMaxWidth().height(265.dp).clip(RoundedCornerShape(30.dp)).background(Color(0xFFE7E8E2))) {
             MountainArt(Modifier.fillMaxSize())
             Box(Modifier.align(Alignment.BottomStart).padding(18.dp).clip(RoundedCornerShape(30.dp))
@@ -76,7 +78,7 @@ fun SetupPage(
     language: String, goal: String, onLanguage: (String) -> Unit,
     onGoal: (String) -> Unit, onNext: () -> Unit
 ) {
-    Column(Modifier.fillMaxSize().background(Paper).padding(24.dp)) {
+    Column(Modifier.fillMaxSize().background(Paper).statusBarsPadding().navigationBarsPadding().verticalScroll(rememberScrollState()).padding(24.dp)) {
         Spacer(Modifier.height(20.dp))
         Pill("01 / 02  •  BAŞLANGIÇ")
         Spacer(Modifier.height(24.dp))
@@ -113,7 +115,7 @@ fun SetupPage(
 
 @Composable
 fun CheckPage(answer: Int, onAnswer: (Int) -> Unit, onNext: () -> Unit) {
-    Column(Modifier.fillMaxSize().background(Paper).padding(24.dp)) {
+    Column(Modifier.fillMaxSize().background(Paper).statusBarsPadding().navigationBarsPadding().verticalScroll(rememberScrollState()).padding(24.dp)) {
         Spacer(Modifier.height(20.dp))
         Pill("02 / 02  •  ISINMA")
         Spacer(Modifier.height(24.dp))
@@ -137,7 +139,7 @@ fun CheckPage(answer: Int, onAnswer: (Int) -> Unit, onNext: () -> Unit) {
                 }
             }
         }
-        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.height(36.dp))
         MajorButton(if(answer == -1) "Testi atla ve başla" else "İlk görevime geç", onNext)
         Spacer(Modifier.height(15.dp))
     }
