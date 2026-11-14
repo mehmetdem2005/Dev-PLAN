@@ -137,6 +137,30 @@ fun MountainArt(modifier: Modifier = Modifier) {
         }
     }
 }
+
+@Composable
+fun MeasuredWaveform(peaks: List<Int>, modifier: Modifier = Modifier, color: Color = Cobalt) {
+    if (peaks.isEmpty()) {
+        Box(modifier.height(66.dp), contentAlignment = Alignment.Center) {
+            Text("Bu deneme için ses genliği kaydedilmedi.", fontSize = 12.sp, color = Muted)
+        }
+        return
+    }
+    Canvas(modifier.height(66.dp)) {
+        val count = peaks.size.coerceAtMost(76)
+        val step = size.width / count.toFloat()
+        val maxPeak = 32767f
+        for (i in 0 until count) {
+            val index = (i.toLong() * peaks.size / count).toInt().coerceIn(peaks.indices)
+            val normalized = (peaks[index] / maxPeak).coerceIn(0f, 1f)
+            val height = size.height * (0.08f + normalized * 0.86f)
+            val x = (i+.5f) * step
+            drawLine(color, Offset(x,(size.height-height)/2), Offset(x,(size.height+height)/2),
+                strokeWidth= (step*.48f).coerceAtLeast(2f), cap=StrokeCap.Round)
+        }
+    }
+}
+
 @Composable
 fun InfoNotice(text: String) {
     Surface(color = LightBlue, shape = RoundedCornerShape(16.dp)) {
