@@ -12,7 +12,7 @@ import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -92,11 +92,11 @@ fun ProgressPage(store: LocalStore, onAnalysis: () -> Unit, onDaily: () -> Unit)
     Surface(color=LightBlue, shape=RoundedCornerShape(24.dp)) {
         Column(Modifier.fillMaxWidth().padding(18.dp)) {
             Text("İlk deneme", fontSize=12.sp, color=Muted)
-            Waveform(Modifier.fillMaxWidth(), if(store.firstRecording.isBlank()) Line else Cobalt)
+            MeasuredWaveform(store.firstPeaks, Modifier.fillMaxWidth(), color=Cobalt)
             Text("Sonraki deneme", fontSize=12.sp, color=Muted)
-            Waveform(Modifier.fillMaxWidth(), if(store.secondRecording.isBlank()) Line else Ink)
+            MeasuredWaveform(store.secondPeaks, Modifier.fillMaxWidth(), color=Ink)
             InfoNotice(if(store.firstRecording.isBlank()) "Önce bir konuşma görevine girip kayıt oluştur." else
-                "Bu dalgalar süs amaçlıdır. Gerçek sesini dinleyerek iki denemeyi karşılaştır.")
+                "Bu grafik kayıttaki tepe genlik örneklerinden oluşturuldu. Fonem skoru değildir.")
             Spacer(Modifier.height(12.dp))
             OutlineButton("Kayıt karşılaştırmasını aç", onAnalysis)
         }
@@ -110,33 +110,43 @@ fun ProgressPage(store: LocalStore, onAnalysis: () -> Unit, onDaily: () -> Unit)
 fun SharePage(store: LocalStore, onShare: () -> Unit) {
     Text("Öğrendiklerini paylaş.", style=MaterialTheme.typography.headlineMedium)
     Spacer(Modifier.height(8.dp))
-    Text("Kısa videoya dönüştürülebilecek hikâyenin metin önizlemesi.", color=Muted)
+    Text("Cihazında 1080 × 1920 boyutunda gerçek PNG sonuç kartı oluştur. İnternet gerekmez.", color=Muted)
     Spacer(Modifier.height(22.dp))
-    Box(Modifier.fillMaxWidth().height(400.dp).background(Ink, RoundedCornerShape(28.dp))) {
+    Box(Modifier.fillMaxWidth().height(400.dp).background(Pane, RoundedCornerShape(28.dp))) {
         Column(Modifier.fillMaxSize().padding(24.dp), horizontalAlignment=Alignment.CenterHorizontally) {
             Pill("YANKI  /  KONUŞMA GÜNLÜĞÜ", Lime)
             Spacer(Modifier.height(34.dp))
             Text("KONUŞMAYA\nCESARET ET.", fontSize=30.sp, fontWeight=FontWeight.Black,
                 lineHeight=34.sp, color=Color.White, textAlign=TextAlign.Center)
             Spacer(Modifier.height(20.dp))
-            Waveform(Modifier.fillMaxWidth(), color=Lime)
+            MeasuredWaveform(store.secondPeaks.ifEmpty {store.firstPeaks}, Modifier.fillMaxWidth(), color=Cobalt)
             Spacer(Modifier.height(18.dp))
-            Text("İlk deneme  " + (store.firstDuration/1000) + " sn", color=Color.White, fontSize=15.sp)
+            Text("İlk deneme  " + (store.firstDuration/1000) + " sn", color=Ink, fontSize=15.sp)
             Spacer(Modifier.height(12.dp))
             Text("Sonraki deneme  " + (store.secondDuration/1000) + " sn", color=Color.White, fontSize=15.sp)
             Spacer(Modifier.weight(1f))
-            Text("KENDİ SESİN • KENDİ HİKÂYEN", color=Lime, fontWeight=FontWeight.Bold, fontSize=11.sp)
+            Text("KENDİ SESİN • KENDİ HİKÂYEN", color=Cobalt, fontWeight=FontWeight.Bold, fontSize=11.sp)
         }
     }
     Spacer(Modifier.height(18.dp))
-    InfoNotice("Bu sürümde metin paylaşımı çalışır. MP4 video dışa aktarma henüz uygulanmadı; ekran videosu veya hazırlanmış ses kaydı üretilmiş gibi gösterilmiyor.")
+    InfoNotice("Paylaş düğmesi gerçek bir PNG kartını oluşturur. MP4 video ve sesli Reels düzenleyicisi henüz uygulanmadı.")
     Spacer(Modifier.height(18.dp))
-    MajorButton("Görev sonucunu paylaş", onShare, dark=true)
+    MajorButton("PNG sonuç kartını paylaş", onShare, dark=true)
     Spacer(Modifier.height(28.dp))
 }
 
 @Composable
 fun ProfilePage(store: LocalStore, onGoals: () -> Unit, onIpa: () -> Unit, onProgress: () -> Unit) {
+    var showDelete by remember { mutableStateOf(false) }
+    if (showDelete) {
+        AlertDialog(
+            onDismissRequest = { showDelete = false },
+            title = { Text("Ses kayıtları silinsin mi?") },
+            text = { Text("Uygulamadaki bütün M4A konuşma kayıtları ve ses genlikleri cihazdan silinecek. Bu işlem geri alınamaz.") },
+            confirmButton = { TextButton(onClick = { store.deleteAllAudio(); showDelete = false }) { Text("Kalıcı sil") } },
+            dismissButton = { TextButton(onClick = { showDelete = false }) { Text("Vazgeç") } }
+        )
+    }
     Surface(color=Pane, shape=RoundedCornerShape(24.dp)) {
         Row(Modifier.fillMaxWidth().padding(20.dp), verticalAlignment=Alignment.CenterVertically) {
             Box(Modifier.size(68.dp).background(Lime, CircleShape), contentAlignment=Alignment.Center) {
@@ -159,6 +169,7 @@ fun ProfilePage(store: LocalStore, onGoals: () -> Unit, onIpa: () -> Unit, onPro
     SelectRow("Hedeflerimi değiştir", "Dil hedefi ve çalışma amacı", onClick=onGoals)
     SelectRow("IPA ve ağız konumları", "Gerçek ölçüm değil, öğretici şema", onClick=onIpa)
     SelectRow("İlerleme kayıtlarım", "Yerel ses denemelerim", onClick=onProgress)
+    SelectRow("Ses kayıtlarımı sil", "Tüm yerel M4A kayıtlarını kalıcı sil", onClick={ showDelete = true })
     Spacer(Modifier.height(18.dp))
     InfoNotice("Gizlilik: Ses dosyaları uygulamanın özel depolamasında tutulur ve sunucuya yüklenmez. Uygulama kaldırılırsa yerel veriler silinir. Bu sürüm ücretli API, reklam, hesap veya bulut erişimi kullanmaz.")
     Spacer(Modifier.height(16.dp))
