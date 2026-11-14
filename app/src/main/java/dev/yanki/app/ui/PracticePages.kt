@@ -79,7 +79,7 @@ fun IpaPage(selected: Int, onSelect: (Int) -> Unit, onSpeak: (String) -> Unit) {
                     drawPath(tongue, Color(0xFF8B9297), style=androidx.compose.ui.graphics.drawscope.Stroke(width=6.dp.toPx(),cap=StrokeCap.Round))
                     drawCircle(Lime, radius=9.dp.toPx(), center=Offset(size.width*.72f,size.height*.43f))
                 }
-                Pill("ŞEMATİK GÖSTERİM", modifierNotUsedColor())
+                Pill("ŞEMATİK GÖSTERİM", Pane)
             }
             Spacer(Modifier.height(18.dp))
             Text(lesson.instruction, style=MaterialTheme.typography.bodyLarge)
@@ -97,19 +97,16 @@ fun IpaPage(selected: Int, onSelect: (Int) -> Unit, onSpeak: (String) -> Unit) {
     Spacer(Modifier.height(28.dp))
 }
 
-// Static contrast label color, not an actual measured tongue-position estimate.
-private fun modifierNotUsedColor(): Color = Pane
-
 @Composable
 fun AnalysisPage(store: LocalStore, onPlay: (String) -> Unit, onRetry: () -> Unit,
     onFinish: () -> Unit, onShare: () -> Unit) {
     Text("Kendi sesindeki farkı dinle.", style=MaterialTheme.typography.headlineMedium)
     Spacer(Modifier.height(8.dp))
-    Text("Kayıt süresi gerçek ölçümdür. Dalga deseni dekoratiftir; ölçülmüş fonem grafiği değildir.", color=Muted)
+    Text("Kayıt süreleri ve tepe genlikleri gerçek mikrofon verisidir; fonem doğruluğu analizi değildir.", color=Muted)
     Spacer(Modifier.height(20.dp))
-    RecordingCard("01", "İlk deneme", store.firstRecording, store.firstDuration, onPlay)
+    RecordingCard("01", "İlk deneme", store.firstRecording, store.firstDuration, store.firstPeaks, onPlay)
     Spacer(Modifier.height(12.dp))
-    RecordingCard("02", "Sonraki deneme", store.secondRecording, store.secondDuration, onPlay)
+    RecordingCard("02", "Sonraki deneme", store.secondRecording, store.secondDuration, store.secondPeaks, onPlay)
     Spacer(Modifier.height(18.dp))
     Row(horizontalArrangement=Arrangement.spacedBy(10.dp)) {
         MetricCard("İlk kayıt süresi", (store.firstDuration / 1000.0).formatSeconds(), Modifier.weight(1f))
@@ -130,7 +127,7 @@ fun AnalysisPage(store: LocalStore, onPlay: (String) -> Unit, onRetry: () -> Uni
 private fun Double.formatSeconds(): String = String.format(java.util.Locale.US, "%.1f sn", this)
 
 @Composable
-private fun RecordingCard(number: String, title: String, path: String, duration: Int, onPlay: (String) -> Unit) {
+private fun RecordingCard(number: String, title: String, path: String, duration: Int, peaks: List<Int>, onPlay: (String) -> Unit) {
     Surface(color=Pane, shape=RoundedCornerShape(22.dp), modifier=Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp)) {
             Row(verticalAlignment=Alignment.CenterVertically) {
@@ -140,7 +137,7 @@ private fun RecordingCard(number: String, title: String, path: String, duration:
                 Text((duration/1000.0).formatSeconds(), color=Muted, fontSize=12.sp)
             }
             Spacer(Modifier.height(8.dp))
-            Waveform(Modifier.fillMaxWidth(), if(path.isNotBlank()) Cobalt else Line)
+            MeasuredWaveform(peaks, Modifier.fillMaxWidth(), color = Cobalt)
             Spacer(Modifier.height(9.dp))
             OutlinedButton(onClick={ onPlay(path) }, enabled=path.isNotBlank() && File(path).exists(),
                 shape=RoundedCornerShape(14.dp)) {
