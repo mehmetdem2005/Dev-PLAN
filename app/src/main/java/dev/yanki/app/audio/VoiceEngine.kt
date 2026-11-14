@@ -54,6 +54,8 @@ class VoiceEngine(private val context: Context) {
             false
         }
     }
+    fun peakAmplitude(): Int = if (isRecording) runCatching { recorder?.maxAmplitude ?: 0 }.getOrDefault(0) else 0
+
     private var lastFile = ""
     fun stop(): Pair<String, Int>? {
         if (!isRecording) return null
