@@ -49,6 +49,7 @@ fun YankiApp(store: LocalStore, voice: VoiceEngine) {
     var recording by remember { mutableStateOf(false) }
     var began by remember { mutableLongStateOf(0L) }
     var seconds by remember { mutableIntStateOf(0) }
+    val recordedPeaks = remember { mutableStateListOf<Int>() }
     var selectedSound by remember { mutableIntStateOf(0) }
     var pairIndex by remember { mutableIntStateOf(0) }
     var pairTarget by remember { mutableIntStateOf(Random.nextInt(2)) }
@@ -70,6 +71,7 @@ fun YankiApp(store: LocalStore, voice: VoiceEngine) {
     }
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted && voice.start()) {
+            recordedPeaks.clear()
             began = SystemClock.elapsedRealtime()
             recording = true
         } else {
@@ -81,13 +83,14 @@ fun YankiApp(store: LocalStore, voice: VoiceEngine) {
             val result = voice.stop()
             recording = false
             if (result != null) {
-                store.saveRecording(result.first, result.second)
+                store.saveRecording(result.first, result.second, recordedPeaks.toList())
                 page = Page.ANALYSIS
             } else Toast.makeText(context, "Kayıt kaydedilemedi. Yeniden deneyin.", Toast.LENGTH_LONG).show()
         } else {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                 permission.launch(Manifest.permission.RECORD_AUDIO)
             } else if (voice.start()) {
+                recordedPeaks.clear()
                 began = SystemClock.elapsedRealtime()
                 recording = true
             } else Toast.makeText(context, "Mikrofon başlatılamadı.", Toast.LENGTH_LONG).show()
@@ -96,7 +99,8 @@ fun YankiApp(store: LocalStore, voice: VoiceEngine) {
     LaunchedEffect(recording) {
         while (recording) {
             seconds = ((SystemClock.elapsedRealtime() - began) / 1000L).toInt()
-            delay(250)
+            if (recordedPeaks.size < 500) recordedPeaks.add(voice.peakAmplitude())
+            delay(160)
         }
     }
     BackHandler(page != Page.HOME && page != Page.WELCOME) {
@@ -143,7 +147,7 @@ fun YankiApp(store: LocalStore, voice: VoiceEngine) {
                         onMission = { store.selectMission(it); goto(Page.SCENARIO) })
                     Page.MISSIONS -> MissionsPage(store, onMission = { store.selectMission(it); goto(Page.SCENARIO) })
                     Page.SCENARIO -> ScenarioPage(mission, onPlay = { say(mission.prompt) }, onBegin = { goto(Page.RECORD) })
-                    Page.RECORD -> RecordPage(mission, recording, seconds,
+                    Page.RECORD -> RecordPage(mission, recording, seconds, recordedPeaks.toList(),
                         firstExists = store.firstRecording.isNotBlank(),
                         onRecord = { toggleRecord() }, onExample = { say(mission.prompt) },
                         onAnalysis = { goto(Page.ANALYSIS) })
