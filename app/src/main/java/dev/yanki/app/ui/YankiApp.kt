@@ -206,7 +206,7 @@ private fun AppFrame(
     onNavigate: (Page) -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Column(Modifier.fillMaxSize().background(Paper)) {
+    Column(Modifier.fillMaxSize().background(Paper).statusBarsPadding()) {
         Row(Modifier.fillMaxWidth().padding(start = 18.dp, end = 20.dp, top = 12.dp, bottom = 14.dp),
             verticalAlignment = Alignment.CenterVertically) {
             if (showBack) {
