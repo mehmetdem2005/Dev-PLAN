@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat
 import dev.yanki.app.audio.VoiceEngine
 import dev.yanki.app.data.LearningContent
 import dev.yanki.app.data.LocalStore
+import dev.yanki.app.share.ShareCardExporter
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
@@ -182,10 +183,10 @@ fun YankiApp(store: LocalStore, voice: VoiceEngine) {
                     Page.PROGRESS -> ProgressPage(store, onAnalysis = { goto(Page.ANALYSIS) },
                         onDaily = { goto(Page.DAILY) })
                     Page.SHARE -> SharePage(store, onShare = {
-                        share("YANKI ile konuşma çalışmam\nGörev: " + mission.title +
-                            "\nİlk kayıt: " + (store.firstDuration/1000) + " saniye\n" +
-                            "Son kayıt: " + (store.secondDuration/1000) + " saniye\n" +
-                            "Kısa bir çalışma yaptım. Sen de bir konuşma görevi dene!")
+                        runCatching { ShareCardExporter.share(context, mission, store.firstDuration, store.secondDuration) }
+                            .onFailure {
+                                Toast.makeText(context, "Görsel paylaşımı başlatılamadı.", Toast.LENGTH_LONG).show()
+                            }
                     })
                     Page.PROFILE -> ProfilePage(store, onGoals = { goto(Page.SETUP) },
                         onIpa = { goto(Page.IPA) }, onProgress = { goto(Page.PROGRESS) })
