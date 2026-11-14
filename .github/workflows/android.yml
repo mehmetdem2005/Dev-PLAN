@@ -24,8 +24,11 @@ jobs:
           gradle-version: '8.9'
       - name: Install Android SDK dependencies
         run: |
-          sdkmanager --licenses < /dev/null >/dev/null 2>&1 || true
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          SDK_ROOT="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          SDKMANAGER="$(find "$SDK_ROOT/cmdline-tools" -type f -name sdkmanager | sort -V | tail -n 1)"
+          test -x "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
+          "$SDKMANAGER" "platforms;android-35" "build-tools;35.0.0"
       - name: Assemble debug
         run: gradle :app:assembleDebug --no-daemon --stacktrace
       - name: Upload debug APK
