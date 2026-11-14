@@ -276,7 +276,7 @@ fun ScenarioPage(mission: Mission, onPlay: () -> Unit, onBegin: () -> Unit) {
 
 @Composable
 fun RecordPage(
-    mission: Mission, recording: Boolean, seconds: Int, firstExists: Boolean,
+    mission: Mission, recording: Boolean, seconds: Int, peaks: List<Int>, firstExists: Boolean,
     onRecord: () -> Unit, onExample: () -> Unit, onAnalysis: () -> Unit
 ) {
     Pill(if(firstExists) "İKİNCİ DENEME" else "İLK DENEME")
@@ -291,7 +291,7 @@ fun RecordPage(
             Spacer(Modifier.height(12.dp))
             SoundButton("Örneği dinle", onExample)
             Spacer(Modifier.height(18.dp))
-            Waveform(Modifier.fillMaxWidth(), color = if(recording) Cobalt else Muted.copy(alpha=.4f))
+            MeasuredWaveform(peaks, Modifier.fillMaxWidth(), color = Cobalt)
             Spacer(Modifier.height(10.dp))
             Text(if(recording) "KAYDEDİLİYOR • " + seconds + " sn" else "KAYIT BEKLENİYOR",
                 color=if(recording) Cobalt else Muted, fontWeight=FontWeight.Bold, fontSize=12.sp)
@@ -307,7 +307,7 @@ fun RecordPage(
         }
     }
     Spacer(Modifier.height(16.dp))
-    InfoNotice("Gerçek kaydın cihazda M4A olarak saklanır. Şu anda otomatik ses/fonem puanı verilmez.")
+    InfoNotice("Mikrofonun kaydettiği tepe genlikleri gösterilir; bu fonem doğruluğu ölçümü değildir. Sesin cihazda M4A olarak saklanır.")
     if(firstExists) {
         Spacer(Modifier.height(14.dp))
         OutlineButton("İlk kaydımı dinle", onAnalysis)
